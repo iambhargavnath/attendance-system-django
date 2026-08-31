@@ -1,0 +1,553 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ subject.code }} Attendance - NIELIT
+{% endblock %}
+
+{% block content %}
+
+<!-- Breadcrumb -->
+
+<nav aria-label="breadcrumb">
+
+    <ol class="breadcrumb">
+
+        <li class="breadcrumb-item">
+            <a href="{% url 'dashboard' %}">
+                Dashboard
+            </a>
+        </li>
+
+        <li class="breadcrumb-item">
+            <a href="{% url 'course_list' subject.semester.course.department.id %}">
+                {{ subject.semester.course.code }}
+            </a>
+        </li>
+
+        <li class="breadcrumb-item">
+            <a href="{% url 'subject_list' subject.semester.id %}">
+                {{ subject.semester.name }}
+            </a>
+        </li>
+
+        <li class="breadcrumb-item active">
+            {{ subject.code }}
+        </li>
+
+    </ol>
+
+</nav>
+
+
+<!-- Subject Header -->
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+
+    <div>
+
+        <div class="text-body-secondary">
+            {{ subject.semester.course.code }}
+        </div>
+
+        <h1 class="h3 mb-1">
+            {{ subject.code }} — {{ subject.name }}
+        </h1>
+
+        <p class="text-body-secondary mb-0">
+            {{ subject.semester.name }}
+        </p>
+
+    </div>
+
+
+    <div class="d-flex gap-2">
+
+        <a
+            href="{% url 'mark_attendance' subject.id %}"
+            class="btn btn-primary"
+        >
+            Take Attendance
+        </a>
+
+        <a
+            href="{% url 'export_attendance' %}?department={{ selected_department }}&course={{ selected_course }}&semester={{ selected_semester }}&subject={{ selected_subject }}&date={{ selected_date }}&student={{ selected_student }}&status={{ selected_status }}"
+            class="btn btn-outline-success"
+        >
+            Export CSV
+        </a>
+
+    </div>
+
+</div>
+
+
+<!-- Attendance Filters -->
+
+<div class="card mb-4">
+
+    <div class="card-header">
+
+        <strong>
+            Attendance History
+        </strong>
+
+    </div>
+
+
+    <div class="card-body">
+
+        <form method="get">
+
+            <div class="row g-3">
+
+
+                <!-- Date -->
+
+                <div class="col-md-4">
+
+                    <label class="form-label">
+                        Date
+                    </label>
+
+                    <select
+                        name="date"
+                        class="form-select"
+                    >
+
+                        <option value="">
+                            All Dates
+                        </option>
+
+                        {% for attendance_date in attendance_dates %}
+
+                            <option
+                                value="{{ attendance_date|date:'Y-m-d' }}"
+                                {% if selected_date == attendance_date|date:'Y-m-d' %}
+                                    selected
+                                {% endif %}
+                            >
+
+                                {{ attendance_date|date:"d M Y" }}
+
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- Student -->
+
+                <div class="col-md-4">
+
+                    <label class="form-label">
+                        Student
+                    </label>
+
+                    <select
+                        name="student"
+                        class="form-select"
+                    >
+
+                        <option value="">
+                            All Students
+                        </option>
+
+                        {% for student in students %}
+
+                            <option
+                                value="{{ student.id }}"
+                                {% if selected_student == student.id|stringformat:"s" %}
+                                    selected
+                                {% endif %}
+                            >
+
+                                {{ student.roll_number }}
+                                —
+                                {{ student.name }}
+
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- Status -->
+
+                <div class="col-md-4">
+
+                    <label class="form-label">
+                        Status
+                    </label>
+
+                    <select
+                        name="status"
+                        class="form-select"
+                    >
+
+                        <option
+                            value=""
+                            {% if not selected_status %}
+                                selected
+                            {% endif %}
+                        >
+                            All Status
+                        </option>
+
+                        <option
+                            value="P"
+                            {% if selected_status == "P" %}
+                                selected
+                            {% endif %}
+                        >
+                            Present
+                        </option>
+
+                        <option
+                            value="A"
+                            {% if selected_status == "A" %}
+                                selected
+                            {% endif %}
+                        >
+                            Absent
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- Filter Buttons -->
+
+                <div class="col-12">
+
+                    <div class="d-flex gap-2">
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary"
+                        >
+                            Filter
+                        </button>
+
+                        <a
+                            href="{% url 'attendance_register' subject.id %}"
+                            class="btn btn-outline-secondary"
+                        >
+                            Clear
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- Summary -->
+
+{% if not selected_status %}
+
+    <!-- All Status -->
+
+    <div class="row g-3 mb-4">
+
+
+        <!-- Total Records -->
+
+        <div class="col-md-4">
+
+            <div class="card">
+
+                <div class="card-body">
+
+                    <div class="text-body-secondary">
+                        Total Records
+                    </div>
+
+                    <div class="fs-3 fw-semibold">
+                        {{ total_records }}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Present -->
+
+        <div class="col-md-4">
+
+            <div class="card">
+
+                <div class="card-body">
+
+                    <div class="text-body-secondary">
+                        Present
+                    </div>
+
+                    <div class="fs-3 fw-semibold text-success">
+                        {{ present_count }}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Absent -->
+
+        <div class="col-md-4">
+
+            <div class="card">
+
+                <div class="card-body">
+
+                    <div class="text-body-secondary">
+                        Absent
+                    </div>
+
+                    <div class="fs-3 fw-semibold text-danger">
+                        {{ absent_count }}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+{% else %}
+
+    <!-- Present / Absent Filter -->
+
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-4">
+
+            <div class="card">
+
+                <div class="card-body">
+
+                    <div class="text-body-secondary">
+                        Total Records
+                    </div>
+
+                    <div class="fs-3 fw-semibold">
+                        {{ total_records }}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+{% endif %}
+
+
+<!-- Selected Date -->
+
+{% if selected_date_obj %}
+
+    <div class="alert alert-light border">
+
+        Showing attendance for:
+
+        <strong>
+            {{ selected_date_obj|date:"l, d F Y" }}
+        </strong>
+
+    </div>
+
+{% endif %}
+
+
+<!-- Attendance Table -->
+
+<div class="card">
+
+    <div class="card-header">
+
+        <div class="d-flex justify-content-between align-items-center">
+
+            <strong>
+                Attendance Records
+            </strong>
+
+            <span class="text-body-secondary">
+
+                {{ attendance_rows|length }}
+                record{{ attendance_rows|length|pluralize }}
+
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <div class="table-responsive">
+
+        <table class="table table-bordered table-hover align-middle mb-0">
+
+            <thead class="table-light">
+
+                <tr>
+
+                    <th>
+                        Roll No.
+                    </th>
+
+                    <th>
+                        Student
+                    </th>
+
+                    <th>
+                        Date
+                    </th>
+
+                    <th>
+                        Status
+                    </th>
+
+                    <th>
+                        Class Taken By
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for row in attendance_rows %}
+
+                    <tr>
+
+                        <!-- Roll Number -->
+
+                        <td>
+                            {{ row.student.roll_number }}
+                        </td>
+
+
+                        <!-- Student -->
+
+                        <td>
+                            {{ row.student.name }}
+                        </td>
+
+
+                        <!-- Date -->
+
+                        <td>
+                            {{ row.date|date:"d M Y" }}
+                        </td>
+
+
+                        <!-- Status -->
+
+                        <td>
+
+                            {% if row.status == "P" %}
+
+                                <span class="badge text-bg-success">
+                                    Present
+                                </span>
+
+                            {% elif row.status == "A" %}
+
+                                <span class="badge text-bg-danger">
+                                    Absent
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge text-bg-secondary">
+                                    {{ row.status_display }}
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- Class Taken By -->
+
+                        <td>
+
+                            {% if row.taken_by %}
+
+                                {{ row.taken_by }}
+
+                            {% else %}
+
+                                <span class="text-body-secondary">
+                                    —
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+
+                        <td
+                            colspan="5"
+                            class="text-center py-5"
+                        >
+
+                            <div class="text-body-secondary mb-2">
+
+                                No attendance records found.
+
+                            </div>
+
+                            <a
+                                href="{% url 'mark_attendance' subject.id %}"
+                                class="btn btn-primary btn-sm"
+                            >
+                                Take Attendance
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

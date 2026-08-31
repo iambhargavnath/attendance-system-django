@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Courses - NIELIT{% endblock %}
+{% block content %}
+<nav aria-label="breadcrumb"><ol class="breadcrumb">
+<li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+{% if department %}<li class="breadcrumb-item active">{{ department.name }}</li>{% else %}<li class="breadcrumb-item active">Courses</li>{% endif %}
+</ol></nav>
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+  <div><h1 class="h3 mb-1">{% if department %}{{ department.name }} — Courses{% else %}All Courses{% endif %}</h1><p class="text-body-secondary mb-0">Select a course to continue to semesters.</p></div>
+  {% if user.is_superuser %}<a class="btn btn-primary" href="{% url 'add_course' %}">Add Course</a>{% endif %}
+</div>
+<form method="get" class="input-group mb-4">
+<input name="q" value="{{ query }}" class="form-control" placeholder="Search course by name or code">
+<button type="submit" class="btn btn-outline-primary">Search</button>
+</form>
+<div class="list-group">
+{% for course in courses %}
+<a href="{% url 'semester_list' course.id %}" class="list-group-item list-group-item-action">
+<div class="d-flex flex-column flex-md-row justify-content-between gap-2">
+<span><strong>{{ course.code }}</strong> — {{ course.name }}<small class="d-block text-body-secondary">{{ course.department.name }}</small></span>
+<span class="badge text-bg-light align-self-start">{{ course.semesters.count }} semester{{ course.semesters.count|pluralize }}</span>
+</div>
+</a>
+{% empty %}<div class="alert alert-info">No courses found.</div>{% endfor %}
+</div>
+{% endblock %}

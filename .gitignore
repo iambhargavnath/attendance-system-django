@@ -1,0 +1,170 @@
+# ==============================
+
+# Python
+
+# ==============================
+
+**pycache**/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+
+# ==============================
+
+# Virtual Environment
+
+# ==============================
+
+.venv/
+venv/
+env/
+ENV/
+.env
+.env.*
+!.env.example
+
+# ==============================
+
+# Django
+
+# ==============================
+
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Collected static files
+
+staticfiles/
+
+# Media files
+
+media/
+
+# ==============================
+
+# Django / Python cache
+
+# ==============================
+
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# ==============================
+
+# IDEs / Editors
+
+# ==============================
+
+.idea/
+.vscode/
+*.swp
+*.swo
+*.swn
+*~
+
+# ==============================
+
+# OS Files
+
+# ==============================
+
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# ==============================
+
+# Build / Distribution
+
+# ==============================
+
+build/
+dist/
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+
+# ==============================
+
+# Packaging
+
+# ==============================
+
+*.whl
+MANIFEST
+
+# ==============================
+
+# Environment / Secrets
+
+# ==============================
+
+*.env
+*.env.local
+*.env.production
+*.env.development
+
+# ==============================
+
+# Coverage / Testing
+
+# ==============================
+
+.tox/
+.nox/
+coverage.xml
+*.cover
+.pyre/
+
+# ==============================
+
+# Jupyter
+
+# ==============================
+
+.ipynb_checkpoints/
+
+# ==============================
+
+# Temporary Files
+
+# ==============================
+
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+
+# ==============================
+
+# Generated Files
+
+# ==============================
+
+*.pid
+*.seed
+*.sqlite3
+
+# ==============================
+
+# Project-specific
+
+# ==============================
+
+staticfiles/
+media/
+logs/
+tmp/
+temp/

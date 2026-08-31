@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}National Institute of Electronics & Information Technology{% endblock %}
+{% block content %}
+<div class="min-vh-75 d-flex align-items-center">
+  <div class="row justify-content-center w-100">
+    <div class="col-lg-9 text-center">
+      <span class="badge text-bg-primary px-3 py-2 mb-4">NIELIT</span>
+      <h1 class="display-4 fw-bold">National Institute of Electronics &amp; Information Technology</h1>
+      <p class="lead text-body-secondary mt-3 mb-4">Student enrollment and attendance management system.</p>
+      <a href="{% url 'login' %}" class="btn btn-primary btn-lg px-4">Staff Login</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

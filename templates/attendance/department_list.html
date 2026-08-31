@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Departments - NIELIT{% endblock %}
+{% block content %}
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+  <div><h1 class="h3 mb-1">Departments</h1><p class="text-body-secondary mb-0">Academic departments configured for the institute.</p></div>
+  <a class="btn btn-primary" href="{% url 'add_department' %}">Add Department</a>
+</div>
+<form method="get" class="input-group mb-4">
+  <input name="q" value="{{ query }}" class="form-control" placeholder="Search department">
+  <button type="submit" class="btn btn-outline-primary">Search</button>
+</form>
+<div class="row g-3">
+{% for department in departments %}
+<div class="col-md-6 col-xl-4"><div class="card h-100"><div class="card-body">
+  <div class="small text-body-secondary">{{ department.code }}</div>
+  <h2 class="h5">{{ department.name }}</h2>
+  <p class="text-body-secondary">{{ department.course_count }} course{{ department.course_count|pluralize }}</p>
+  <a href="{% url 'course_list' department.id %}" class="btn btn-outline-primary">View Courses</a>
+</div></div></div>
+{% empty %}<div class="col-12"><div class="alert alert-info">No departments found.</div></div>{% endfor %}
+</div>
+{% endblock %}
