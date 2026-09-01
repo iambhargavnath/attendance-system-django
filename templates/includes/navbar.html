@@ -1,0 +1,151 @@
+<nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+
+  <div class="container">
+
+    <!-- Logo / Home -->
+
+    <a
+      class="navbar-brand fw-semibold"
+      href="{% url 'home' %}"
+    >
+      NIELIT
+    </a>
+
+
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#mainNav"
+      aria-controls="mainNav"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+
+    <div
+      class="collapse navbar-collapse"
+      id="mainNav"
+    >
+
+      {% if user.is_authenticated and user.is_staff %}
+
+        <ul class="navbar-nav me-auto">
+
+          <!-- Dashboard -->
+
+          <li class="nav-item">
+
+            <a
+              class="nav-link"
+              href="{% url 'dashboard' %}"
+            >
+              Dashboard
+            </a>
+
+          </li>
+
+
+          <!-- Students -->
+
+          <li class="nav-item">
+
+            <a
+              class="nav-link"
+              href="{% url 'student_list_all' %}"
+            >
+              Students
+            </a>
+
+          </li>
+
+
+          <!-- Admin Only -->
+
+          {% if user.is_superuser %}
+
+            <!-- Management -->
+
+            <li class="nav-item">
+
+              <a
+                class="nav-link"
+                href="{% url 'management' %}"
+              >
+                Management
+              </a>
+
+            </li>
+
+
+            <!-- Django Admin -->
+
+            <li class="nav-item">
+
+              <a
+                class="nav-link"
+                href="{% url 'admin:index' %}"
+              >
+                Admin
+              </a>
+
+            </li>
+
+          {% endif %}
+
+        </ul>
+
+
+        <!-- User -->
+
+        <span class="navbar-text me-3">
+
+          {{ user.get_full_name|default:user.username }}
+
+        </span>
+
+
+        <!-- Logout -->
+
+        <form
+          method="post"
+          action="{% url 'logout' %}"
+          class="d-inline"
+        >
+
+          {% csrf_token %}
+
+          <button
+            type="submit"
+            class="btn btn-outline-light btn-sm"
+          >
+            Logout
+          </button>
+
+        </form>
+
+
+      {% else %}
+
+        <!-- Guest -->
+
+        <div class="ms-auto">
+
+          <a
+            href="{% url 'login' %}"
+            class="btn btn-primary btn-sm"
+          >
+            Staff Login
+          </a>
+
+        </div>
+
+      {% endif %}
+
+    </div>
+
+  </div>
+
+</nav>

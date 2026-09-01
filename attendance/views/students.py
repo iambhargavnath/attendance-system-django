@@ -47,13 +47,22 @@ def student_list(request):
     # Departments
     # ---------------------------------------------
 
-    departments = Department.objects.all()
+    departments = (
+        Department.objects
+        .all()
+        .order_by("name")
+    )
 
     # ---------------------------------------------
     # Courses
     # ---------------------------------------------
 
-    courses = Course.objects.all()
+    courses = (
+        Course.objects
+        .select_related("department")
+        .all()
+        .order_by("name")
+    )
 
     if department_id:
 
@@ -65,7 +74,15 @@ def student_list(request):
     # Semesters
     # ---------------------------------------------
 
-    semesters = Semester.objects.all()
+    semesters = (
+        Semester.objects
+        .select_related("course")
+        .all()
+        .order_by(
+            "course__name",
+            "number",
+        )
+    )
 
     if course_id:
 
@@ -79,12 +96,17 @@ def student_list(request):
 
     students = (
         Student.objects
-        .select_related("course")
-        .prefetch_related(
-            "enrollments__semester"
+        .select_related(
+            "course",
+            "course__department",
+            "enrollment__semester",
         )
         .order_by("roll_number")
     )
+
+    # ---------------------------------------------
+    # Department filter
+    # ---------------------------------------------
 
     if department_id:
 
@@ -92,20 +114,28 @@ def student_list(request):
             course__department_id=department_id
         )
 
+    # ---------------------------------------------
+    # Course filter
+    # ---------------------------------------------
+
     if course_id:
 
         students = students.filter(
             course_id=course_id
         )
 
+    # ---------------------------------------------
+    # Semester filter
+    # ---------------------------------------------
+
     if semester_id:
 
         students = students.filter(
-            enrollments__semester_id=semester_id
-        ).distinct()
+            enrollment__semester_id=semester_id
+        )
 
     # ---------------------------------------------
-    # Status
+    # Status filter
     # ---------------------------------------------
 
     if status in [
@@ -128,6 +158,10 @@ def student_list(request):
             Q(name__icontains=query)
             | Q(roll_number__icontains=query)
         )
+
+    # ---------------------------------------------
+    # Render
+    # ---------------------------------------------
 
     return render(
         request,

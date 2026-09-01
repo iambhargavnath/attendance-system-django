@@ -6,9 +6,6 @@ from ..models import Course, Department
 
 
 def home(request):
-    if request.user.is_authenticated and request.user.is_staff:
-        return redirect("dashboard")
-
     return render(
         request,
         "home.html",

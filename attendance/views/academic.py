@@ -31,7 +31,7 @@ def is_admin(user):
 # Department
 # ==================================================
 
-@user_passes_test(is_admin)
+@staff_member_required
 def department_list(request):
 
     query = request.GET.get("q", "").strip()
@@ -100,7 +100,7 @@ def add_department(request):
 # Course
 # ==================================================
 
-@user_passes_test(is_admin)
+@staff_member_required
 def course_list(request, department_id=None):
 
     department = (

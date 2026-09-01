@@ -1,37 +1,68 @@
 <!doctype html>
+
 <html lang="en">
+
 <head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% block title %}NIELIT Attendance{% endblock %}</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-  {% block extra_head %}{% endblock %}
+
+  <meta charset="utf-8">
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1"
+
+>
+
+  <title>
+    {% block title %}
+      NIELIT Attendance
+    {% endblock %}
+  </title>
+
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  >
+
+{% block extra_head %}{% endblock %}
+
 </head>
+
 <body class="bg-light">
-<nav class="navbar navbar-expand-lg bg-dark navbar-dark">
-  <div class="container">
-    <a class="navbar-brand fw-semibold" href="{% url 'home' %}">NIELIT</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"><span class="navbar-toggler-icon"></span></button>
-    <div class="collapse navbar-collapse" id="mainNav">
-      {% if user.is_authenticated and user.is_staff %}
-      <ul class="navbar-nav me-auto">
-        <li class="nav-item"><a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'student_list_all' %}">Students</a></li>
-        {% if user.is_superuser %}
-        <li class="nav-item"><a class="nav-link" href="{% url 'management' %}">Management</a></li>
-        <li class="nav-item"><a class="nav-link" href="/admin/">Admin</a></li>
-        {% endif %}
-      </ul>
-      <span class="navbar-text me-3">{{ user.get_full_name|default:user.username }}</span>
-      <form method="post" action="{% url 'logout' %}" class="d-inline">{% csrf_token %}<button type="submit" class="btn btn-outline-light btn-sm">Logout</button></form>
-      {% else %}
-      <div class="ms-auto"><a href="{% url 'login' %}" class="btn btn-primary btn-sm">Staff Login</a></div>
-      {% endif %}
-    </div>
-  </div>
-</nav>
+
+{% include "includes/navbar.html" %}
+
 <main class="container py-4">
-{% for message in messages %}<div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show">{{ message }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>{% endfor %}
+
+{% for message in messages %}
+
+```
+<div
+  class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show"
+  role="alert"
+>
+
+  {{ message }}
+
+  <button
+    type="button"
+    class="btn-close"
+    data-bs-dismiss="alert"
+    aria-label="Close"
+  ></button>
+
+</div>
+```
+
+{% endfor %}
+
 {% block content %}{% endblock %}
+
 </main>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-</body></html>
+
+<script
+  src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+></script>
+
+</body>
+
+</html>

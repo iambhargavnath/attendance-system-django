@@ -1,4 +1,5 @@
 from django.db import models
+from .academic import Semester
 
 
 class Student(models.Model):
@@ -48,31 +49,34 @@ class Student(models.Model):
 
     @property
     def current_semester(self):
-        enrollment = (
-            self.enrollments
-            .select_related("semester")
-            .order_by("semester__number")
-            .last()
-        )
-
-        return enrollment.semester if enrollment else None
+        try:
+            return self.enrollment.semester
+        except Enrollment.DoesNotExist:
+            return None
 
     def enroll_in_first_semester(self):
+
         first_semester = (
             self.course.semesters
             .order_by("number")
             .first()
         )
 
-        if first_semester:
-            Enrollment.objects.get_or_create(
-                student=self,
-                semester=first_semester,
-            )
+        if not first_semester:
+            return None
 
-        return first_semester
+        enrollment, _ = Enrollment.objects.update_or_create(
+            student=self,
+            defaults={
+                "semester": first_semester,
+            },
+        )
+
+        return enrollment.semester
+    
 
     def promote(self):
+
         current = self.current_semester
 
         if not current:
@@ -80,22 +84,26 @@ class Student(models.Model):
 
         next_semester = (
             self.course.semesters
-            .filter(number__gt=current.number)
+            .filter(
+                number__gt=current.number
+            )
             .order_by("number")
             .first()
         )
 
-        if next_semester:
-            Enrollment.objects.get_or_create(
-                student=self,
-                semester=next_semester,
-            )
+        if not next_semester:
+            return None
 
-            return next_semester
+        self.enrollment.semester = next_semester
+        self.enrollment.save(
+            update_fields=["semester"]
+        )
 
-        return None
+        return next_semester
+    
 
     def demote(self):
+
         current = self.current_semester
 
         if not current:
@@ -103,57 +111,57 @@ class Student(models.Model):
 
         previous_semester = (
             self.course.semesters
-            .filter(number__lt=current.number)
+            .filter(
+                number__lt=current.number
+            )
             .order_by("-number")
             .first()
         )
 
-        if previous_semester:
-            Enrollment.objects.get_or_create(
-                student=self,
-                semester=previous_semester,
-            )
+        if not previous_semester:
+            return None
 
-            return previous_semester
+        self.enrollment.semester = previous_semester
+        self.enrollment.save(
+            update_fields=["semester"]
+        )
 
-        return None
+        return previous_semester
 
 
 class Enrollment(models.Model):
-
-    student = models.ForeignKey(
+    student = models.OneToOneField(
         Student,
         on_delete=models.CASCADE,
-        related_name="enrollments",
+        related_name="enrollment",
     )
 
     semester = models.ForeignKey(
-        "attendance.Semester",
-        on_delete=models.CASCADE,
-        related_name="enrollments",
+        Semester,
+        on_delete=models.PROTECT,
+        related_name="current_students",
     )
 
     enrolled_on = models.DateField(
-        auto_now_add=True,
+        auto_now_add=True
     )
 
     class Meta:
-        ordering = ["semester__number"]
-
-        constraints = [
-            models.UniqueConstraint(
-                fields=["student", "semester"],
-                name="unique_student_semester_enrollment",
-            ),
-        ]
+        ordering = ["-enrolled_on"]
 
     def __str__(self):
-        return f"{self.student} - {self.semester}"
+        return (
+            f"{self.student} - "
+            f"{self.semester}"
+        )
 
     def clean(self):
         from django.core.exceptions import ValidationError
 
-        if self.semester.course_id != self.student.course_id:
+        if (
+            self.semester.course_id
+            != self.student.course_id
+        ):
             raise ValidationError(
                 "Enrollment semester must belong to the student's course."
             )

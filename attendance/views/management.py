@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
+from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.shortcuts import redirect, render
@@ -20,7 +21,7 @@ def management(request):
     )
 
 
-@user_passes_test(is_admin)
+@staff_member_required
 def staff_list(request):
 
     query = request.GET.get("q", "").strip()
