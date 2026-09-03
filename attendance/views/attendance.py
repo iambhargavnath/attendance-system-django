@@ -68,7 +68,7 @@ def attendance_register(request, subject_id):
         Student.objects
         .filter(
             course=semester.course,
-            enrollments__semester=semester,
+            enrollment__semester=semester,
         )
         .distinct()
         .order_by("roll_number")
@@ -260,7 +260,7 @@ def mark_attendance(request, subject_id):
     students = list(
         Student.objects
         .filter(
-            enrollments__semester=subject.semester
+            enrollment__semester=subject.semester
         )
         .distinct()
         .order_by("roll_number")
@@ -751,7 +751,7 @@ def attendance_report(request):
     if semester_id:
 
         students = students.filter(
-            enrollments__semester_id=semester_id
+            enrollment__semester_id=semester_id
         ).distinct()
 
     students = students.order_by(
