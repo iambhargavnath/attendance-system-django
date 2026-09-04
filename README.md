@@ -434,18 +434,6 @@ config/settings.py
 
 Do not commit passwords, secret keys, or production database credentials to Git.
 
-│   ├── admin.py
-│   ├── apps.py
-│   └── urls.py
-│
-├── templates/
-├── static/
-├── manage.py
-├── requirements.txt
-├── .env
-├── .env.example
-└── .gitignore
-
 ```
 
 ## Setup
