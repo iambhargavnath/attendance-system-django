@@ -434,17 +434,6 @@ config/settings.py
 
 Do not commit passwords, secret keys, or production database credentials to Git.
 
-```
-
-## Setup
-
-### 1. Clone the project
-
-```bash
-git clone <repository-url>
-cd <project-directory>
-```
-
 ### 2. Create virtual environment
 
 ```bash
