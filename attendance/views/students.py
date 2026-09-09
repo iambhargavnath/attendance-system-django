@@ -149,6 +149,75 @@ def student_list(request):
     )
 
 
+
+# ==================================================
+# Edit Student
+# ==================================================
+
+@staff_member_required
+def edit_student(request, student_id):
+
+    student = get_object_or_404(
+        Student,
+        pk=student_id,
+    )
+
+    original_course_id = student.course_id
+
+    form = StudentForm(
+        request.POST or None,
+        instance=student,
+    )
+
+    if request.method == "POST" and form.is_valid():
+
+        student = form.save()
+
+        # If course changed, move student to first semester
+        # of the new course.
+        if student.course_id != original_course_id:
+            first_semester = student.enroll_in_first_semester()
+
+            if first_semester:
+                messages.success(
+                    request,
+                    (
+                        f"{student.name}'s details were updated "
+                        f"and the student was moved to "
+                        f"{first_semester.name}."
+                    ),
+                )
+            else:
+                messages.warning(
+                    request,
+                    (
+                        f"{student.name}'s details were updated, "
+                        "but the new course has no semesters yet."
+                    ),
+                )
+        else:
+            messages.success(
+                request,
+                f"{student.name}'s details were updated successfully.",
+            )
+
+        return redirect("student_list_all")
+
+    return render(
+        request,
+        "attendance/form_page.html",
+        {
+            "title": "Edit Student",
+            "subtitle": (
+                "Update the student's course, roll number, or name."
+            ),
+            "form": form,
+            "back_url": reverse("student_list_all"),
+            "back_label": "Student Registry",
+        },
+    )
+
+
 # ==================================================
 # Enroll Student
 # ==================================================

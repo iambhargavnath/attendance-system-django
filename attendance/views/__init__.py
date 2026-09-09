@@ -13,6 +13,7 @@ from .academic import (
 
 from .students import (
     student_list,
+    edit_student,
     enroll_student,
     passout_student,
     promote_student,
