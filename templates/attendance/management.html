@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Management - NIELIT{% endblock %}
+{% block content %}
+<div class="mb-4">
+  <h1 class="h3 mb-1">Management</h1>
+  <p class="text-body-secondary">Manage staff and academic structure.</p>
+</div>
+<div class="row g-3">
+  <div class="col-md-6 col-xl-4"><div class="card h-100"><div class="card-body">
+    <h2 class="h5">Staff</h2><p class="text-body-secondary">Manage staff accounts.</p>
+    <a class="btn btn-primary" href="{% url 'staff_list' %}">View Staff</a>
+    <a class="btn btn-outline-primary" href="{% url 'add_staff' %}">Add Staff</a>
+  </div></div></div>
+  <div class="col-md-6 col-xl-4"><div class="card h-100"><div class="card-body">
+    <h2 class="h5">Courses</h2><p class="text-body-secondary">Create and maintain courses.</p>
+    <a class="btn btn-primary" href="{% url 'course_list' %}">View Courses</a>
+    <a class="btn btn-outline-primary" href="{% url 'add_course' %}">Add Course</a>
+  </div></div></div>
+  <div class="col-md-6 col-xl-4"><div class="card h-100"><div class="card-body">
+    <h2 class="h5">Semesters</h2><p class="text-body-secondary">Add semesters to a selected course.</p>
+    <a class="btn btn-outline-primary" href="{% url 'course_list' %}">Select Course</a>
+  </div></div></div>
+  <div class="col-md-6 col-xl-4"><div class="card h-100"><div class="card-body">
+    <h2 class="h5">Subjects</h2><p class="text-body-secondary">Add subjects inside a selected semester.</p>
+    <a class="btn btn-outline-primary" href="{% url 'course_list' %}">Select Course</a>
+  </div></div></div>
+  <div class="col-md-6 col-xl-4"><div class="card h-100"><div class="card-body">
+    <h2 class="h5">Student Enrollment</h2><p class="text-body-secondary">Enroll students into courses.</p>
+    <a class="btn btn-primary" href="{% url 'enroll_student' %}">Enroll Student</a>
+    <a class="btn btn-outline-secondary" href="{% url 'student_list_all' %}">Student Registry</a>
+  </div></div></div>
+</div>
+{% endblock %}

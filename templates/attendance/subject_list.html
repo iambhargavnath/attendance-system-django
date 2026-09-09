@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Subjects - NIELIT{% endblock %}
+{% block content %}
+<nav aria-label="breadcrumb"><ol class="breadcrumb">
+<li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+<li class="breadcrumb-item"><a href="{% url 'course_list' %}">Courses</a></li>
+<li class="breadcrumb-item active">{{ semester.name }}</li>
+</ol></nav>
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+<div><div class="text-body-secondary">{{ semester.course.code }}</div><h1 class="h3 mb-1">{{ semester.name }} — Subjects</h1><p class="text-body-secondary mb-0">Select a subject to view or take attendance.</p></div>
+{% if user.is_superuser %}<a class="btn btn-primary" href="{% url 'add_subject' semester.id %}">Add Subject</a>{% endif %}
+</div>
+<form method="get" class="input-group mb-4"><input name="q" value="{{ query }}" class="form-control" placeholder="Search subject by name or code"><button type="submit" class="btn btn-outline-primary">Search</button></form>
+<div class="list-group">
+{% for subject in subjects %}
+<div class="list-group-item"><div class="d-flex flex-column flex-md-row justify-content-between gap-2 align-items-md-center">
+<div><strong>{{ subject.code }} — {{ subject.name }}</strong><div class="small text-body-secondary">Attendance history and daily register</div></div>
+<div class="d-flex gap-2"><a class="btn btn-sm btn-primary" href="{% url 'attendance_register' subject.id %}">Attendance</a><a class="btn btn-sm btn-outline-primary" href="{% url 'mark_attendance' subject.id %}">Take Attendance</a></div>
+</div></div>
+{% empty %}<div class="alert alert-info">No subjects found.</div>{% endfor %}
+</div>
+{% endblock %}
